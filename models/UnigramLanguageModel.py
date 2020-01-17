@@ -24,8 +24,8 @@ class UnigramLanguageModel:
         word_probability_denominator = self.corpus_length
         if self.k_smoothing > 0:
             # TODO: Implemented add K Smoothing here?, currently it is add 1
-            word_probability_numerator += K
-            word_probability_denominator += self.unique_words + K
+            word_probability_numerator += self.k_smoothing
+            word_probability_denominator += self.unique_words + self.k_smoothing
         return float(word_probability_numerator) / float(word_probability_denominator)
     
     
@@ -36,4 +36,8 @@ class UnigramLanguageModel:
                 word_probability = self.calculate_unigram_probablities(word)
                 sentence_probability_log_sum += math.log(word_probability, 2)
         return sentence_probability_log_sum
+    
+    
+    def generate_sentence(self, word):
+        return "NOT_IMPLEMENTED"
         
