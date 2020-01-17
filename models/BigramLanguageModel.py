@@ -19,7 +19,7 @@ class BigramLanguageModel(UnigramLanguageModel):
                     if previous_word != START and word != STOP:
                         self.unique_bigrams.add((previous_word, word))
                 previous_word = word
-        self.total_unique_bigrams = len(self.unigram_frequencies)
+        self.total_unique_bigrams = len(self.bigram_frequencies)
         
     
     def calculate_bigram_probability(self, previous_word, word):
@@ -38,6 +38,6 @@ class BigramLanguageModel(UnigramLanguageModel):
         for word in sentence:
             if previous_word != None:
                 bigram_prob = self.calculate_bigram_probability(previous_word, word)
-                sentence_log_probability += math.log(bigram_prob)
+                sentence_log_probability += math.log(bigram_prob, 2)
             previous_word = word
         return sentence_log_probability
