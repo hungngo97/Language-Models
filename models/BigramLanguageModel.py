@@ -40,3 +40,4 @@ class BigramLanguageModel(UnigramLanguageModel):
                 bigram_prob = self.calculate_bigram_probability(previous_word, word)
                 sentence_log_probability += math.log(bigram_prob)
             previous_word = word
+        return sentence_log_probability
