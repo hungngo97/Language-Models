@@ -32,6 +32,11 @@ class PerplexityEvaluator:
         sentence_prob_log_sum = 0
         for sentence in sentences:
             sentence_prob_log_sum += model.calculate_sentence_log_probability(sentence)
+            """try:
+                sentence_prob_log_sum += model.calculate_sentence_log_probability(sentence)
+            except:
+                # If met a sentence that we haven't seen before, assign infinity
+                sentence_prob_log_sum += math.log(2e-20, 2)"""
         return math.pow(2, -1 * sentence_prob_log_sum / unigram_count)
     
     def get_bigram_perplexity(self, model, sentences):
@@ -39,6 +44,13 @@ class PerplexityEvaluator:
         bigram_prob_log_sum = 0
         for sentence in sentences:
             bigram_prob_log_sum += model.calculate_bigram_sentence_log_probability(sentence)
+            """
+            try:
+                bigram_prob_log_sum += model.calculate_bigram_sentence_log_probability(sentence)
+            except:
+                # If met a sentence that we haven't seen before, assign infinity
+                bigram_prob_log_sum += float('-inf')
+            """
         return math.pow(2, -1 * bigram_prob_log_sum / bigram_count)
     
     def get_trigram_perplexity(self, model, sentences):
@@ -46,5 +58,12 @@ class PerplexityEvaluator:
         trigram_prob_log_sum = 0
         for sentence in sentences:
             trigram_prob_log_sum += model.calculate_trigram_sentence_log_probability(sentence)
+            """
+            try:
+                trigram_prob_log_sum += model.calculate_trigram_sentence_log_probability(sentence)
+            except:
+                # If met a sentence that we haven't seen before, assign infinity
+                trigram_prob_log_sum += float('-inf')
+            """
         return math.pow(2, -1 * trigram_prob_log_sum / trigram_count)
     
