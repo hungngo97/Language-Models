@@ -13,9 +13,11 @@ class TrigramLanguageModel(BigramLanguageModel):
         BigramLanguageModel.__init__(self, sentences, k_smoothing)
         self.trigram_frequencies = dict()
         self.unique_trigrams = set()
+        self.trigram_count = 0
         for sentence in sentences:
             previous_previous_word = None 
             previous_word = None
+            self.trigram_count += len(sentence) - 2
             for word in sentence:
                 if previous_word != None and previous_previous_word != None:
                     self.trigram_frequencies[(previous_previous_word, previous_word, word)] = \
@@ -28,14 +30,26 @@ class TrigramLanguageModel(BigramLanguageModel):
         
     
     def calculate_trigram_probability(self, previous_previous_word, previous_word, word):
-        numerator = self.bigram_frequencies.get((previous_word, word), 0)
-        denominator = self.unigram_frequencies.get(previous_word, 0)
-        # TODO: Add K smoothing here
+        if previous_previous_word not in self.unigram_frequencies:
+            previous_previous_word = UNK
+        if previous_word not in self.unigram_frequencies:
+            previous_word = UNK
+        if word not in self.unigram_frequencies:
+            word = UNK
+        numerator = self.trigram_frequencies.get((previous_previous_word, previous_word, word), 0)
+        denominator = self.bigram_frequencies.get((previous_word, word), 0)
         if self.k_smoothing:
             numerator += self.k_smoothing
-            # TODO: Not sure if this smoothing is correct
-            denominator += self.total_unique_trigrams + self.k_smoothing
-        return 0.0 if denominator == 0 else float(numerator) / float(denominator)
+            denominator += self.unique_words * self.k_smoothing
+            # denominator = self.unique_words * \
+             #   (self.bigram_frequencies.get((previous_word, word), 0) + self.k_smoothing)
+            # denominator = self.unique_words * \
+              #  ( self.k_smoothing + self.trigram_count )
+                
+            
+        if (denominator == 0):
+            return 0
+        return float(numerator) / float(denominator)
     
     def calculate_trigram_sentence_log_probability(self, sentence):
         sentence_log_probability = 0
@@ -46,6 +60,8 @@ class TrigramLanguageModel(BigramLanguageModel):
                 trigram_prob = self.calculate_trigram_probability(
                         previous_previous_word, previous_word, word
                         )
+                if (trigram_prob == 0):
+                    return float('-inf')
                 sentence_log_probability += math.log(trigram_prob, 2)
             previous_previous_word = previous_word
             previous_word = word

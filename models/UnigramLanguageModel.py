@@ -20,7 +20,9 @@ class UnigramLanguageModel:
                 
     
     def calculate_unigram_probablities(self, word):
-        word_probability_numerator = self.unigram_frequencies.get(word, 0)
+        if word not in self.unigram_frequencies:
+            word = UNK
+        word_probability_numerator = self.unigram_frequencies.get(word)
         word_probability_denominator = self.corpus_length
         if self.k_smoothing > 0:
             # TODO: Implemented add K Smoothing here?, currently it is add 1
@@ -34,6 +36,8 @@ class UnigramLanguageModel:
         for word in sentence:
             if word != START and word != STOP:
                 word_probability = self.calculate_unigram_probablities(word)
+                if (word_probability == 0):
+                    return float('-inf')
                 sentence_probability_log_sum += math.log(word_probability, 2)
         return sentence_probability_log_sum
     

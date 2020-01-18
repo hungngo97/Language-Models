@@ -23,13 +23,17 @@ class BigramLanguageModel(UnigramLanguageModel):
         
     
     def calculate_bigram_probability(self, previous_word, word):
+        if previous_word not in self.unigram_frequencies:
+            previous_word = UNK
+        if word not in self.unigram_frequencies:
+            word = UNK
         numerator = self.bigram_frequencies.get((previous_word, word), 0)
         denominator = self.unigram_frequencies.get(previous_word, 0)
         # TODO: Add K smoothing here
         if self.k_smoothing:
             numerator += self.k_smoothing
             # TODO: Not sure if this smoothing is correct
-            denominator += self.total_unique_bigrams + self.k_smoothing
+            denominator += self.unique_words * self.k_smoothing
         return 0.0 if denominator == 0 else float(numerator) / float(denominator)
     
     def calculate_bigram_sentence_log_probability(self, sentence):
@@ -38,6 +42,8 @@ class BigramLanguageModel(UnigramLanguageModel):
         for word in sentence:
             if previous_word != None:
                 bigram_prob = self.calculate_bigram_probability(previous_word, word)
+                if (bigram_prob == 0):
+                    return float('-inf')
                 sentence_log_probability += math.log(bigram_prob, 2)
             previous_word = word
         return sentence_log_probability
