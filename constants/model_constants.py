@@ -2,5 +2,3 @@
 UNK = None
 START = "<<START>>"
 STOP = "<<STOP>>"
-
-c

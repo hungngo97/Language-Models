@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from constants.model_constants import (UNK, START, STOP, LOW_PROB)
+from constants.model_constants import (UNK, START, STOP)
 import math
 from .UnigramLanguageModel import UnigramLanguageModel
 from .BigramLanguageModel import BigramLanguageModel
