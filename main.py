@@ -63,30 +63,7 @@ print_perplexity_score(
         )
 
 print("******************* With Smoothing ****************")
-k = 1 # Dev should be 5000, test 8000
-unigram_model_smooth = UnigramLanguageModel(sentences, K_smoothing=k)
-bigram_model_smooth = BigramLanguageModel(sentences, k_smoothing=k)
-trigram_model_smooth = TrigramLanguageModel(sentences, k_smoothing=k)
-print("============== K = " + str(k) + " ====================")
-print("========== Train set score evaluation =======")
-perplexity_evaluator = PerplexityEvaluator()
-print_perplexity_score(
-        perplexity_evaluator,sentences,
-        unigram_model_smooth, bigram_model_smooth, trigram_model_smooth
-        )
-
-print("========== Dev set score evaluation =======")
-print_perplexity_score(
-        perplexity_evaluator,dev_sentences,
-        unigram_model_smooth, bigram_model_smooth, trigram_model_smooth
-        )
-
-print("========== Test set score evaluation =======")
-print_perplexity_score(
-        perplexity_evaluator,test_sentences,
-        unigram_model_smooth, bigram_model_smooth, trigram_model_smooth
-        )
-for k in range(1,2,2):
+for k in [0.001, 0.01, 0.1, 1, 2, 3, 5]:
     unigram_model_smooth = UnigramLanguageModel(sentences, K_smoothing=k)
     bigram_model_smooth = BigramLanguageModel(sentences, k_smoothing=k)
     trigram_model_smooth = TrigramLanguageModel(sentences, k_smoothing=k)
@@ -111,6 +88,8 @@ for k in range(1,2,2):
             )
 
 print("******************* Linear Interpolation model ****************")
+linear_model = LinearInterpolationLanguageModel(sentences, 0.3, 0.3, 0.4, 0.5, 0.5, k_smoothing=0)
+
 print("========== Train set score evaluation =======")
 perplexity_evaluator = PerplexityEvaluator()
 print(perplexity_evaluator.get_trigram_perplexity(linear_model, sentences))
